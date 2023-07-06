@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDtoResponse> createUser(@RequestBody UserDtoRequest userDtoRequest) {
         UserDtoResponse savedUser = userService.createUser(userDtoRequest);
-        URI uri = URI.create("/api/v1/users/" + savedUser.id());
+        URI uri = URI.create("/api/v1/users/" + savedUser.getId());
         return ResponseEntity.created(uri).body(savedUser);
     }
 
