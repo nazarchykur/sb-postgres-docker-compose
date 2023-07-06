@@ -46,7 +46,7 @@ class UserServiceImplTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        UserDtoResponse expectedUserDtoResponse = new UserDtoResponse();
+        UserDtoResponse expectedUserDtoResponse = new UserDtoResponse(userId, user.getName(), user.getEmail());
         when(dtoMapperUtil.toDto(user, UserDtoResponse.class)).thenReturn(expectedUserDtoResponse);
 
         // Act
@@ -82,8 +82,8 @@ class UserServiceImplTest {
         List<User> userList = Arrays.asList(user1, user2);
         when(userRepository.findAll()).thenReturn(userList);
 
-        UserDtoResponse dtoResponse1 = new UserDtoResponse();
-        UserDtoResponse dtoResponse2 = new UserDtoResponse();
+        UserDtoResponse dtoResponse1 = new UserDtoResponse(user1.getId(), user1.getName(), user1.getEmail());
+        UserDtoResponse dtoResponse2 = new UserDtoResponse(user2.getId(), user2.getName(), user2.getEmail());
         when(dtoMapperUtil.toDto(user1, UserDtoResponse.class)).thenReturn(dtoResponse1);
         when(dtoMapperUtil.toDto(user2, UserDtoResponse.class)).thenReturn(dtoResponse2);
 
@@ -119,9 +119,7 @@ class UserServiceImplTest {
     @Test
     void createUser_ValidUserDtoRequest_ReturnsUserDtoResponse() {
         // Arrange
-        UserDtoRequest userDtoRequest = new UserDtoRequest();
-        userDtoRequest.setName("John");
-        userDtoRequest.setEmail("john@example.com");
+        UserDtoRequest userDtoRequest = new UserDtoRequest("John", "john@example.com");
 
         User user = new User();
         user.setName("John");
@@ -135,10 +133,7 @@ class UserServiceImplTest {
         when(dtoMapperUtil.toEntity(userDtoRequest, User.class)).thenReturn(user);
         when(userRepository.save(user)).thenReturn(savedUser);
 
-        UserDtoResponse expectedDtoResponse = new UserDtoResponse();
-        expectedDtoResponse.setId(123L);
-        expectedDtoResponse.setName("John");
-        expectedDtoResponse.setEmail("john@example.com");
+        UserDtoResponse expectedDtoResponse = new UserDtoResponse(123L, "John", "john@example.com");
 
         when(dtoMapperUtil.toDto(savedUser, UserDtoResponse.class)).thenReturn(expectedDtoResponse);
 
@@ -157,19 +152,14 @@ class UserServiceImplTest {
     void updateUser_ExistingUser_ReturnsUpdatedUserDtoResponse() {
         // Arrange
         Long userId = 123L;
-        UserDtoRequest userDtoRequest = new UserDtoRequest();
-        userDtoRequest.setName("John Doe");
-        userDtoRequest.setEmail("john.doe@example.com");
+        UserDtoRequest userDtoRequest = new UserDtoRequest("John Doe", "john.doe@example.com");
 
         User existingUser = new User();
         existingUser.setId(userId);
         existingUser.setName("Old Name");
         existingUser.setEmail("old.email@example.com");
 
-        UserDtoResponse expectedDtoResponse = new UserDtoResponse();
-        expectedDtoResponse.setId(userId);
-        expectedDtoResponse.setName("John Doe");
-        expectedDtoResponse.setEmail("john.doe@example.com");
+        UserDtoResponse expectedDtoResponse = new UserDtoResponse(userId, "John Doe", "john.doe@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
         when(dtoMapperUtil.toDto(existingUser, UserDtoResponse.class)).thenReturn(expectedDtoResponse);
@@ -188,9 +178,7 @@ class UserServiceImplTest {
     void updateUser_NonExistingUser_ThrowsEntityNotFoundException() {
         // Arrange
         Long userId = 123L;
-        UserDtoRequest userDtoRequest = new UserDtoRequest();
-        userDtoRequest.setName("John Doe");
-        userDtoRequest.setEmail("john.doe@example.com");
+        UserDtoRequest userDtoRequest = new UserDtoRequest("John Doe", "john.doe@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 

@@ -37,15 +37,9 @@ class UserControllerTest {
     @Test
     void getAllUsers_ReturnsListOfUsers() throws Exception {
         // Arrange
-        UserDtoResponse user1 = new UserDtoResponse();
-        user1.setId(1L);
-        user1.setName("John Doe");
-        user1.setEmail("john.doe@example.com");
+        UserDtoResponse user1 = new UserDtoResponse(1L, "John Doe", "john.doe@example.com");
 
-        UserDtoResponse user2 = new UserDtoResponse();
-        user2.setId(2L);
-        user2.setName("Jane Smith");
-        user2.setEmail("jane.smith@example.com");
+        UserDtoResponse user2 = new UserDtoResponse(2L, "Jane Smith", "jane.smith@example.com");
 
         List<UserDtoResponse> userList = Arrays.asList(user1, user2);
 
@@ -56,22 +50,19 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(userList.size()))
-                .andExpect(jsonPath("$[0].id").value(user1.getId()))
-                .andExpect(jsonPath("$[0].name").value(user1.getName()))
-                .andExpect(jsonPath("$[0].email").value(user1.getEmail()))
-                .andExpect(jsonPath("$[1].id").value(user2.getId()))
-                .andExpect(jsonPath("$[1].name").value(user2.getName()))
-                .andExpect(jsonPath("$[1].email").value(user2.getEmail()));
+                .andExpect(jsonPath("$[0].id").value(user1.id()))
+                .andExpect(jsonPath("$[0].name").value(user1.name()))
+                .andExpect(jsonPath("$[0].email").value(user1.email()))
+                .andExpect(jsonPath("$[1].id").value(user2.id()))
+                .andExpect(jsonPath("$[1].name").value(user2.name()))
+                .andExpect(jsonPath("$[1].email").value(user2.email()));
     }
 
     @Test
     void getUserById_ExistingUser_ReturnsUserDtoResponse() throws Exception {
         // Arrange
         Long userId = 1L;
-        UserDtoResponse expectedDtoResponse = new UserDtoResponse();
-        expectedDtoResponse.setId(userId);
-        expectedDtoResponse.setName("John Doe");
-        expectedDtoResponse.setEmail("john.doe@example.com");
+        UserDtoResponse expectedDtoResponse = new UserDtoResponse(userId, "John Doe", "john.doe@example.com");
 
         when(userService.getUserById(userId)).thenReturn(expectedDtoResponse);
 
@@ -79,9 +70,9 @@ class UserControllerTest {
         mockMvc.perform(get("/api/v1/users/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(expectedDtoResponse.getId()))
-                .andExpect(jsonPath("$.name").value(expectedDtoResponse.getName()))
-                .andExpect(jsonPath("$.email").value(expectedDtoResponse.getEmail()));
+                .andExpect(jsonPath("$.id").value(expectedDtoResponse.id()))
+                .andExpect(jsonPath("$.name").value(expectedDtoResponse.name()))
+                .andExpect(jsonPath("$.email").value(expectedDtoResponse.email()));
     }
 
     @Test
@@ -102,14 +93,9 @@ class UserControllerTest {
     @Test
     void createUser_ReturnsCreatedUserDtoResponse() throws Exception {
         // Arrange
-        UserDtoRequest userDtoRequest = new UserDtoRequest();
-        userDtoRequest.setName("John Doe");
-        userDtoRequest.setEmail("john.doe@example.com");
+        UserDtoRequest userDtoRequest = new UserDtoRequest("John Doe", "john.doe@example.com");
 
-        UserDtoResponse expectedDtoResponse = new UserDtoResponse();
-        expectedDtoResponse.setId(1L);
-        expectedDtoResponse.setName("John Doe");
-        expectedDtoResponse.setEmail("john.doe@example.com");
+        UserDtoResponse expectedDtoResponse = new UserDtoResponse(1L, "John Doe", "john.doe@example.com");
 
         when(userService.createUser(any(UserDtoRequest.class))).thenReturn(expectedDtoResponse);
 
@@ -119,23 +105,18 @@ class UserControllerTest {
                         .content("{\"name\":\"John Doe\",\"email\":\"john.doe@example.com\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/users/1"))
-                .andExpect(jsonPath("$.id").value(expectedDtoResponse.getId()))
-                .andExpect(jsonPath("$.name").value(expectedDtoResponse.getName()))
-                .andExpect(jsonPath("$.email").value(expectedDtoResponse.getEmail()));
+                .andExpect(jsonPath("$.id").value(expectedDtoResponse.id()))
+                .andExpect(jsonPath("$.name").value(expectedDtoResponse.name()))
+                .andExpect(jsonPath("$.email").value(expectedDtoResponse.email()));
     }
 
     @Test
     void updateUser_ExistingUser_ReturnsUpdatedUserDtoResponse() throws Exception {
         // Arrange
         Long userId = 1L;
-        UserDtoRequest userDtoRequest = new UserDtoRequest();
-        userDtoRequest.setName("John Doe");
-        userDtoRequest.setEmail("john.doe@example.com");
+        UserDtoRequest userDtoRequest = new UserDtoRequest("John Doe", "john.doe@example.com");
 
-        UserDtoResponse expectedDtoResponse = new UserDtoResponse();
-        expectedDtoResponse.setId(userId);
-        expectedDtoResponse.setName("John Doe");
-        expectedDtoResponse.setEmail("john.doe@example.com");
+        UserDtoResponse expectedDtoResponse = new UserDtoResponse(userId, "John Doe", "john.doe@example.com");
 
         when(userService.updateUser(userId, userDtoRequest)).thenReturn(expectedDtoResponse);
 
@@ -144,18 +125,16 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"John Doe\",\"email\":\"john.doe@example.com\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(expectedDtoResponse.getId()))
-                .andExpect(jsonPath("$.name").value(expectedDtoResponse.getName()))
-                .andExpect(jsonPath("$.email").value(expectedDtoResponse.getEmail()));
+                .andExpect(jsonPath("$.id").value(expectedDtoResponse.id()))
+                .andExpect(jsonPath("$.name").value(expectedDtoResponse.name()))
+                .andExpect(jsonPath("$.email").value(expectedDtoResponse.email()));
     }
 
     @Test
     void updateUser_NonExistingUser_ReturnsNotFound() throws Exception {
         // Arrange
         Long userId = 999L;
-        UserDtoRequest userDtoRequest = new UserDtoRequest();
-        userDtoRequest.setName("John Doe");
-        userDtoRequest.setEmail("john.doe@example.com");
+        UserDtoRequest userDtoRequest = new UserDtoRequest("John Doe", "john.doe@example.com");
 
         when(userService.updateUser(userId, userDtoRequest)).thenThrow(new EntityNotFoundException("User not found with id=" + userId));
 

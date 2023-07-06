@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
     public UserDtoResponse updateUser(Long id, UserDtoRequest userDtoRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, id)));
-        user.setName(userDtoRequest.getName());
-        user.setEmail(userDtoRequest.getEmail());
+        user.setName(userDtoRequest.name());
+        user.setEmail(userDtoRequest.email());
         return dtoMapperUtil.toDto(user, UserDtoResponse.class);
     }
 
