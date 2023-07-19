@@ -47,3 +47,25 @@ The following API endpoints are available:
 * DELETE /api/v1/users/{id}: Delete a user by ID.
 
 Make sure to replace {id} with the actual ID of the user when using the specific endpoints.
+
+## Code Coverage with JaCoCo
+
+This project utilizes JaCoCo for code coverage analysis. JaCoCo is a Java code coverage library that helps measure the extent to which your code is tested. It provides insights into which parts of your codebase are covered by tests and identifies areas that need additional testing.
+
+###  Generating the JaCoCo Report
+To generate the code coverage report using JaCoCo and verify the coverage thresholds, follow these steps:
+
+1. Run the JaCoCo report task: Open a terminal or command prompt and navigate to your project directory. Then, execute the following command: `./gradlew jacocoTestReport`
+
+   This command will run your tests and generate the JaCoCo report.
+
+2. Access the JaCoCo report: After running the jacocoTestReport task, you can access the generated JaCoCo report by opening the HTML file located in the `build/jacocoHtml/index.html`. This report provides an overview of the code coverage, highlighting which parts of the codebase are covered by tests.
+
+3. Verify the coverage thresholds: To ensure that the code coverage meets the defined thresholds, run the following command: `./gradlew jacocoTestCoverageVerification`
+
+   This command will verify the coverage against the configured thresholds and provide feedback on whether the coverage meets the requirements.
+
+###  Understanding the JaCoCo Report
+The JaCoCo report provides detailed information about code coverage, including metrics such as line coverage, branch coverage, and complexity metrics. It highlights the specific lines of code that are covered or not covered by tests, allowing you to identify areas that require additional testing.
+
+![img_8.png](src%2Fmain%2Fresources%2Fscreenshots%2Fimg_8.png)
